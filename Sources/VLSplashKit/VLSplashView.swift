@@ -20,13 +20,15 @@ struct VLSplashView<Content: View>: View
  @State private var animateTrailingLine: Bool = false
 
  // MARK: - Constructor
+ public
  init(@ViewBuilder content: @escaping () -> Content)
  {
   self.content = content()
  }
  
  // MARK: - Private
- private func delay(_ duration: CGFloat, _ animation: Animation, callback: @escaping () -> Void )
+ private 
+ func delay(_ duration: CGFloat, _ animation: Animation, callback: @escaping () -> Void )
  {
   DispatchQueue.main.asyncAfter(deadline: .now() + duration)
   {
@@ -37,7 +39,8 @@ struct VLSplashView<Content: View>: View
   }
  }
 
- private func onAppear()
+ private 
+ func onAppear()
  {
 //  delay(0.5, .easeInOut(duration: 1)) { hideLogoVLstack.toggle() }
   delay(0.25, .linear(duration: 1)) { animateTrailingLine.toggle() }
