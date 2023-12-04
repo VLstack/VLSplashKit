@@ -1,23 +1,6 @@
 import SwiftUI
-
-// create a new package and use at dependencies:
-
-/// Returns the result of recomputing the view's body with the provided
-/// animation according to “Reduce Motion” accessibility setting.
-///
-/// Source: [HackingWithSwift](https://www.hackingwithswift.com/quick-start/swiftui/how-to-reduce-animations-when-requested)
-///
-/// This function sets the given `Animation` as the `Transaction/animation`
-/// property of the thread's current `Transaction`
-/// if "Reduce Motion" setting is "on" this function returns the provided View body
-internal
-func withAccesibilityAnimation<Result>(_ animation: Animation? = .default,
-                                       _ body: () throws -> Result) rethrows -> Result
-{
-// if UIAccessibility.isReduceMotionEnabled { return try body() }
-
- return try withAnimation(animation, body)
-}
+import VLBrandKit
+import VLUtilsKit
 
 public
 struct VLSplashView<Content: View>: View
@@ -47,7 +30,7 @@ struct VLSplashView<Content: View>: View
  {
   DispatchQueue.main.asyncAfter(deadline: .now() + duration)
   {
-   withAccesibilityAnimation(animation)
+   VLUtilsKit.animate(animation)
    {
     callback()
    }
@@ -63,6 +46,7 @@ struct VLSplashView<Content: View>: View
  }
  
  // MARK: - Public
+ public
  var body: some View
  {
   if isCompleted
@@ -74,50 +58,41 @@ struct VLSplashView<Content: View>: View
    ZStack
    {
     Rectangle()
-     .fill(.white)
+     .fill(VLBrandKit.Colors.primary500)
      .ignoresSafeArea()
     
-    Image(.vLstackLogo)
+    VLBrandKit.Images.logo
      .resizable()
      .renderingMode(.template)
      .aspectRatio(contentMode: .fit)
-     .foregroundColor(.white)
+     .foregroundColor(VLBrandKit.Colors.primary500On)
      .frame(width: logoApp,
             height: logoApp)
-    
+       
     Group
     {
-     VLBrandSplashLineView(size: logoApp,
-                           animateLeading: animateLeadingLine,
-                           animateTrailing: animateTrailingLine)
-     VLBrandSplashLineView(size: logoApp,
-                           animateLeading: animateLeadingLine,
-                           animateTrailing: animateTrailingLine)
+     VLSplashLineView(size: logoApp,
+                      animateLeading: animateLeadingLine,
+                      animateTrailing: animateTrailingLine)
+     VLSplashLineView(size: logoApp,
+                      animateLeading: animateLeadingLine,
+                      animateTrailing: animateTrailingLine)
      .rotationEffect(.init(degrees: 180))
     }
     .frame(maxWidth: .infinity)
     .frame(height: logoApp)
-   }
-   .overlay(alignment: .bottomTrailing)
-   {
-    Image(.vLstackLogo)
-     .resizable()
-     .renderingMode(.template)
-     .aspectRatio(contentMode: .fit)
-     .foregroundColor(.white)
-     .frame(width: logoVLstack,
-            height: logoVLstack)
-     .padding()
    }
    .onAppear(perform: onAppear)
   }
  }
 }
 
+#if DEBUG
 #Preview
 {
- VLBrandSplashView
+ VLSplashView
  {
-  Text("xx")
+  Text("splash is complete")
  }
 }
+#endif
