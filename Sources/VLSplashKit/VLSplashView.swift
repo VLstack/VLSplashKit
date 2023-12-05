@@ -32,7 +32,7 @@ struct VLSplashView<Content: View>: View
  {
   DispatchQueue.main.asyncAfter(deadline: .now() + duration)
   {
-   VLUtilsKit.animate(animation)
+   VLUtils.animate(animation)
    {
     callback()
    }
