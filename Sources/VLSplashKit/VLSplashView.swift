@@ -28,7 +28,9 @@ struct VLSplashView<Content: View>: View
  
  // MARK: - Private
  private 
- func delay(_ duration: CGFloat, _ animation: Animation, callback: @escaping () -> Void )
+ func delayAnimation(_ duration: CGFloat,
+                     _ animation: Animation,
+                     callback: @escaping () -> Void )
  {
   DispatchQueue.main.asyncAfter(deadline: .now() + duration)
   {
@@ -42,10 +44,10 @@ struct VLSplashView<Content: View>: View
  private 
  func onAppear()
  {
-//  delay(0.5, .easeInOut(duration: 1)) { hideLogoVLstack.toggle() }
-  delay(0.25, .linear(duration: 1)) { animateTrailingLine.toggle() }
-  delay(0.5, .linear(duration: 1)) { animateLeadingLine.toggle() }
-  delay(1.5, .linear(duration: 1)) { isCompleted.toggle() }
+//  delayAnimation(0.5, .easeInOut(duration: 1)) { hideLogoVLstack.toggle() }
+  delayAnimation(0.25, .linear(duration: 1)) { animateTrailingLine.toggle() }
+  delayAnimation(0.5, .linear(duration: 1)) { animateLeadingLine.toggle() }
+  delayAnimation(1.5, .linear(duration: 1)) { isCompleted.toggle() }
  }
  
  // MARK: - Public
