@@ -37,7 +37,7 @@ struct VLSplashView<Content: View>: View
   VLUtils.delay(1, animation: .linear(duration: 0.25)) { hideLogoVLstack.toggle() }
   VLUtils.delay(1, animation: .linear(duration: 0.5)) { showLogoApplication.toggle() }
   VLUtils.delay(2.5, animation: .linear(duration: 0.25)) { hideLogoApplication.toggle() }
-  VLUtils.delay(3, animation: .linear(duration: 0.25)) { isFinished.toggle() }
+  VLUtils.delay(3) { isFinished.toggle() }
  }
  
  // MARK: - Public
@@ -69,7 +69,8 @@ struct VLSplashView<Content: View>: View
       .renderingMode(.template)
       .aspectRatio(contentMode: .fit)
       .foregroundColor(VLBrandKit.Colors.primary500On)
-      .scaleEffect(hideLogoApplication ? 100 : 1)
+      .background(hideLogoApplication ? VLBrandKit.Colors.primary500On : Color.clear)
+      .scaleEffect(hideLogoApplication ? 10 : 1)
       .frame(width: logoSize, height: logoSize)
       .opacity(showLogoApplication ? 1 : 0)
         
