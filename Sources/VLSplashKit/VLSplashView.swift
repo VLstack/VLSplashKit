@@ -7,7 +7,8 @@ struct VLSplashView<Content: View>: View
 {
  // MARK: Parameters
  let content: Content
- let image: Image
+ let imageSource: Image
+ let isSFSymbol: Bool
  
  // MARK: - Constants
  let logoSize: CGFloat = 85
@@ -21,16 +22,23 @@ struct VLSplashView<Content: View>: View
  @State private var animateTrailingLine: Bool = false
  
  // MARK: - Constructor
- public
- init(image: Image,
-      @ViewBuilder content: @escaping () -> Content)
+ public init(image: Image,
+             @ViewBuilder content: @escaping () -> Content)
  {
-  self.image = image
+  self.imageSource = image
   self.content = content()
+  self.isSFSymbol = false
  }
  
- private
- func onAppear()
+ public init(systemName: String,
+             @ViewBuilder content: @escaping () -> Content)
+ {
+  self.imageSource = Image(systemName: systemName)
+  self.content = content()
+  self.isSFSymbol = true
+ }
+ 
+ private func onAppear()
  {
   VLUtils.delay(0.25, animation: .linear(duration: 1)) { animateTrailingLine.toggle() }
   VLUtils.delay(0.5, animation: .linear(duration: 1)) { animateLeadingLine.toggle() }
@@ -39,10 +47,29 @@ struct VLSplashView<Content: View>: View
   VLUtils.delay(2.5, animation: .linear(duration: 0.25)) { hideLogoApplication.toggle() }
   VLUtils.delay(3) { isFinished.toggle() }
  }
+
+ @ViewBuilder
+ private var appIcon: some View
+ {
+  if isSFSymbol
+  {
+   imageSource
+    .resizable()
+    .renderingMode(.template)
+    .aspectRatio(contentMode: .fit)
+    .foregroundColor(VLBrandKit.Colors.primary500On)
+    .background(hideLogoApplication ? VLBrandKit.Colors.primary500On : Color.clear)
+  }
+  else
+  {
+   imageSource
+    .resizable()
+    .aspectRatio(contentMode: .fit)
+  }
+ }
  
  // MARK: - Public
- public
- var body: some View
+ public var body: some View
  {
   if isFinished
   {
@@ -52,27 +79,22 @@ struct VLSplashView<Content: View>: View
   {
    ZStack
    {
-     Rectangle()
-      .fill(VLBrandKit.Colors.primary500)
-      .ignoresSafeArea()
-      
-     VLBrandKit.Images.logo
-      .resizable()
-      .renderingMode(.template)
-      .aspectRatio(contentMode: .fit)
-      .foregroundColor(VLBrandKit.Colors.primary500On)
-      .scaleEffect(hideLogoVLstack ? 0 : 1)
-      .frame(width: logoSize, height: logoSize)
+    Rectangle()
+     .fill(VLBrandKit.Colors.primary500)
+     .ignoresSafeArea()
+     
+    VLBrandKit.Images.logo
+     .resizable()
+     .renderingMode(.template)
+     .aspectRatio(contentMode: .fit)
+     .foregroundColor(VLBrandKit.Colors.primary500On)
+     .scaleEffect(hideLogoVLstack ? 0 : 1)
+     .frame(width: logoSize, height: logoSize)
 
-      self.image
-      .resizable()
-      .renderingMode(.template)
-      .aspectRatio(contentMode: .fit)
-      .foregroundColor(VLBrandKit.Colors.primary500On)
-      .background(hideLogoApplication ? VLBrandKit.Colors.primary500On : Color.clear)
-      .scaleEffect(hideLogoApplication ? 10 : 1)
-      .frame(width: logoSize, height: logoSize)
-      .opacity(showLogoApplication ? 1 : 0)
+     appIcon
+     .scaleEffect(hideLogoApplication ? 25 : 1)
+     .frame(width: logoSize, height: logoSize)
+     .opacity(showLogoApplication ? 1 : 0)
         
      Group
      {
@@ -96,7 +118,7 @@ struct VLSplashView<Content: View>: View
 #if DEBUG
 #Preview
 {
- VLSplashView(image: Image(systemName: "figure.american.football"))
+ VLSplashView(systemName: "figure.american.football")
  {
   Text("splash is complete")
  }
