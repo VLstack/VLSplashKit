@@ -92,7 +92,7 @@ struct VLSplashView<Content: View>: View
      .frame(width: logoSize, height: logoSize)
 
      appIcon
-     .scaleEffect(hideLogoApplication ? 25 : 1)
+     .scaleEffect(hideLogoApplication ? 0 : 1)
      .frame(width: logoSize, height: logoSize)
      .opacity(showLogoApplication ? 1 : 0)
         
