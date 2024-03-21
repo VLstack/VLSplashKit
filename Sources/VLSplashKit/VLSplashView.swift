@@ -65,6 +65,7 @@ struct VLSplashView<Content: View>: View
    imageSource
     .resizable()
     .aspectRatio(contentMode: .fit)
+    .clipShape(.rect(cornerRadius: 8))
   }
  }
  
