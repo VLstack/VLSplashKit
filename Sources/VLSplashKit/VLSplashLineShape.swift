@@ -1,7 +1,6 @@
 import SwiftUI
 
-internal
-struct VLSplashLineShape: Shape
+internal struct VLSplashLineShape: Shape
 {
  var size: CGFloat
 

@@ -1,7 +1,6 @@
 import SwiftUI
 
-internal
-struct VLSplashLineView: View
+internal struct VLSplashLineView: View
 {
  var size: CGFloat
  var animateLeading: Bool
