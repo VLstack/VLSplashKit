@@ -2,16 +2,18 @@ import SwiftUI
 import VLBrandKit
 import VLUtilsKit
 
-public
-struct VLSplashView<Content: View>: View
+public struct VLSplashView<Source: View, Content: View>: View
 {
  // MARK: Parameters
- let content: Content
- let imageSource: Image
- let isSFSymbol: Bool
+ private let content: () -> Content
+ private let source: Source
+ private let isImage: Bool
+ private let isTemplate: Bool
+ private let width: CGFloat
+ private let height: CGFloat
  
  // MARK: - Constants
- let logoSize: CGFloat = 85
+ private let size: CGFloat = 85
  
  // MARK: - States
  @State private var isFinished: Bool = false
@@ -22,22 +24,41 @@ struct VLSplashView<Content: View>: View
  @State private var animateTrailingLine: Bool = false
  
  // MARK: - Constructor
+ public init(@ViewBuilder view: @escaping () -> Source,
+             @ViewBuilder content: @escaping () -> Content)
+ {
+  self.content = content
+  self.source = view()
+  self.isImage = false
+  self.isTemplate = false
+  self.width = size
+  self.height = size
+ }
+ 
  public init(image: Image,
-             @ViewBuilder content: @escaping () -> Content)
+             width: CGFloat? = nil,
+             height: CGFloat? = nil,
+             @ViewBuilder content: @escaping () -> Content) where Source == Image
  {
-  self.imageSource = image
-  self.content = content()
-  self.isSFSymbol = false
+  self.content = content
+  self.source = image
+  self.isImage = true
+  self.isTemplate = false
+  self.width = width ?? size
+  self.height = height ?? size
  }
  
- public init(systemName: String,
-             @ViewBuilder content: @escaping () -> Content)
+ public init(template: Image,
+             @ViewBuilder content: @escaping () -> Content) where Source == Image
  {
-  self.imageSource = Image(systemName: systemName)
-  self.content = content()
-  self.isSFSymbol = true
+  self.content = content
+  self.source = template
+  self.isImage = true
+  self.isTemplate = true
+  self.width = size
+  self.height = size
  }
- 
+  
  private func onAppear()
  {
   VLUtils.delay(0.25, animation: .linear(duration: 1)) { animateTrailingLine.toggle() }
@@ -47,34 +68,13 @@ struct VLSplashView<Content: View>: View
   VLUtils.delay(2.5, animation: .linear(duration: 0.25)) { hideLogoApplication.toggle() }
   VLUtils.delay(3) { isFinished.toggle() }
  }
-
- @ViewBuilder
- private var appIcon: some View
- {
-  if isSFSymbol
-  {
-   imageSource
-    .resizable()
-    .renderingMode(.template)
-    .aspectRatio(contentMode: .fit)
-    .foregroundColor(VLBrandKit.Colors.primary500On)
-    .background(hideLogoApplication ? VLBrandKit.Colors.primary500On : Color.clear)
-  }
-  else
-  {
-   imageSource
-    .resizable()
-    .aspectRatio(contentMode: .fit)
-    .clipShape(.rect(cornerRadius: 8))
-  }
- }
  
  // MARK: - Public
  public var body: some View
  {
   if isFinished
   {
-   content
+   content()
   }
   else
   {
@@ -90,28 +90,45 @@ struct VLSplashView<Content: View>: View
      .aspectRatio(contentMode: .fit)
      .foregroundColor(VLBrandKit.Colors.primary500On)
      .scaleEffect(hideLogoVLstack ? 0 : 1)
-     .frame(width: logoSize, height: logoSize)
+     .frame(width: size, height: size)
 
-     appIcon
+     logoView
+     .background(hideLogoApplication ? VLBrandKit.Colors.primary500On : Color.clear)
      .scaleEffect(hideLogoApplication ? 0 : 1)
-     .frame(width: logoSize, height: logoSize)
      .opacity(showLogoApplication ? 1 : 0)
         
      Group
      {
-      VLSplashLineView(size: logoSize,
+      VLSplashLineView(size: size,
                        animateLeading: animateLeadingLine,
                        animateTrailing: animateTrailingLine)
-      VLSplashLineView(size: logoSize,
+      VLSplashLineView(size: size,
                        animateLeading: animateLeadingLine,
                        animateTrailing: animateTrailingLine)
       .rotationEffect(.init(degrees: 180))
      }
      .frame(maxWidth: .infinity)
-     .frame(height: logoSize)
+     .frame(height: size)
     }
    
    .onAppear(perform: onAppear)
+  }
+ }
+ 
+ @ViewBuilder
+ private var logoView: some View
+ {
+  if isImage
+  {
+   (source as! Image).resizable()
+         .renderingMode(isTemplate ? .template : .original)
+         .aspectRatio(contentMode: .fit)
+         .frame(width: width, height: height)
+         .foregroundStyle(VLBrandKit.Colors.primary500On)
+  }
+  else
+  {
+   source
   }
  }
 }
@@ -119,9 +136,31 @@ struct VLSplashView<Content: View>: View
 #if DEBUG
 #Preview
 {
- VLSplashView(systemName: "figure.american.football")
+ VLSplashView { Image(systemName: "figure.american.football").foregroundStyle(.yellow) }
+ content: { Text("splash is complete") }
+}
+
+#Preview
+{
+ VLSplashView { Text("Source").foregroundStyle(.red) }
+     content: { Text("complete") }
+}
+
+#Preview
+{
+ VLSplashView(image: Image(systemName: "figure.american.football"),
+              width: 400,
+              height: 400)
  {
-  Text("splash is complete")
+  Text("completed")
+ }
+}
+
+#Preview
+{
+ VLSplashView(template: Image(systemName: "figure.american.football"))
+ {
+  Text("completed")
  }
 }
 #endif
