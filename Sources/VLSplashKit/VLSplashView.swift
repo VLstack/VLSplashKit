@@ -1,6 +1,7 @@
 import SwiftUI
 import VLBrandKit
 import VLUtilsKit
+import VLstackNamespace
 
 public struct VLSplashView<Source: View, Content: View>: View
 {
