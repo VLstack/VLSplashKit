@@ -82,19 +82,20 @@ public struct VLSplashView<Source: View, Content: View>: View
    ZStack
    {
     Rectangle()
-     .fill(VLBrandKit.Colors.primary500)
+     .fill(VLstack.Brand.Color.primary500)
      .ignoresSafeArea()
      
     VLstack.Brand.Logo.template
      .resizable()
      .renderingMode(.template)
      .aspectRatio(contentMode: .fit)
-     .foregroundColor(VLBrandKit.Colors.primary500On)
+     .foregroundStyle(VLstack.Brand.Color.primary500On)
      .scaleEffect(hideLogoVLstack ? 0 : 1)
      .frame(width: size, height: size)
 
      logoView
-     .background(hideLogoApplication ? VLBrandKit.Colors.primary500On : Color.clear)
+     .background(hideLogoApplication ? VLstack.Brand.Color.primary500On : Color.clear)
+     .background(hideLogoApplication ? VLstack.Brand.Color.primary500On : Color.clear)
      .scaleEffect(hideLogoApplication ? 0 : 1)
      .opacity(showLogoApplication ? 1 : 0)
         
@@ -125,7 +126,7 @@ public struct VLSplashView<Source: View, Content: View>: View
          .renderingMode(isTemplate ? .template : .original)
          .aspectRatio(contentMode: .fit)
          .frame(width: width, height: height)
-         .foregroundStyle(VLBrandKit.Colors.primary500On)
+         .foregroundStyle(VLstack.Brand.Color.primary500On)
   }
   else
   {
