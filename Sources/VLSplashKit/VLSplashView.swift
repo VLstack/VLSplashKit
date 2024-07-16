@@ -85,7 +85,7 @@ public struct VLSplashView<Source: View, Content: View>: View
      .fill(VLstack.Brand.Color.primary500)
      .ignoresSafeArea()
      
-    VLstack.Brand.Logo.template
+    VLstack.Brand.logo
      .resizable()
      .renderingMode(.template)
      .aspectRatio(contentMode: .fit)
