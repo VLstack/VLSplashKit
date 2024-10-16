@@ -12,7 +12,7 @@ let package = Package(name: "VLSplashKit",
                       ],
                       dependencies:
                       [
-                       .package(url: "https://github.com/VLstack/VLBrandKit.git", from: "2.2.0"),
+                       .package(url: "https://github.com/VLstack/VLBrandKit", from: "2.5.0"),
                        .package(url: "https://github.com/VLstack/VLUtilsKit", from: "1.2.0")
                       ],
                       targets:
