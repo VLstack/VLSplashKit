@@ -103,8 +103,6 @@ public extension VLstack
       .frame(width: size, height: size)
 
      logoView
-      .background(hideLogoApplication ? VLstack.Brand.Color.primary500On : Color.clear)
-      .background(hideLogoApplication ? VLstack.Brand.Color.primary500On : Color.clear)
       .scaleEffect(hideLogoApplication ? 0 : 1)
       .opacity(showLogoApplication ? 1 : 0)
 
