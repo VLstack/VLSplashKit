@@ -1,7 +1,7 @@
 import VLstackNamespace
 import SwiftUI
 
-// IOS18
+// IO18
 //public extension EnvironmentValues
 //{
 // @Entry var splashType: VLstack.SplashType = .brandBackground
@@ -18,7 +18,7 @@ extension EnvironmentValues
  {
   get { self[VLSplashTypeKey.self] }
   set { self[VLSplashTypeKey.self] = newValue }
-  }
+ }
 }
 
 public extension View

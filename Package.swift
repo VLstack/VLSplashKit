@@ -12,15 +12,13 @@ let package = Package(name: "VLSplashKit",
                       ],
                       dependencies:
                       [
-                       .package(url: "https://github.com/VLstack/VLBrandKit", from: "2.5.0"),
-                       .package(url: "https://github.com/VLstack/VLUtilsKit", from: "1.2.0")
+                       .package(url: "https://github.com/VLstack/VLstackNamespace", from: "1.1.1"),
+                       .package(url: "https://github.com/VLstack/VLBrandKit", from: "2.5.0")
                       ],
                       targets:
                       [
                        .target(name: "VLSplashKit",
-                               dependencies: [ "VLBrandKit", "VLUtilsKit" ]),
-                       .testTarget(name: "VLSplashKitTests",
-                                   dependencies: [ "VLSplashKit" ])
+                               dependencies: [ "VLBrandKit" ])
                       ])
 
 // https://medium.com/jamf-engineering/swift-6-upgrade-preparation-0941fbea2db6

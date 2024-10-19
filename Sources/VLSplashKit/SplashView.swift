@@ -1,46 +1,44 @@
-import SwiftUI
-import VLBrandKit
-import VLUtilsKit
 import VLstackNamespace
-
-@available(*, deprecated, renamed: "VLstack.SplashView", message: "use VLstack.SplashView instead")
-typealias VLSplashView = VLstack.SplashView
+import VLBrandKit
+import SwiftUI
 
 public extension VLstack
 {
+ internal struct SplashAnimationValues
+ {
+  var lineLeadingTrim: CGFloat = 0
+  var lineTrailingTrim: CGFloat = 0
+  var scaleVLstack: CGFloat = 1
+  var scaleAppLogo: CGFloat = 0
+  var opacityAppLogo: CGFloat = 0
+ }
+
  struct SplashView<Source: View, Content: View>: View
  {
   @Environment(\.splashType) private var splashType
 
-  // MARK: Parameters
   private let content: () -> Content
   private let source: Source
   private let isImage: Bool
   private let isTemplate: Bool
   private let width: CGFloat
   private let height: CGFloat
+  private let size: CGFloat = min(128, max(64, UIScreen.main.bounds.width * 0.3))
 
-  // MARK: - Constants
-  private let size: CGFloat = 85
+  @State private var animationStarted: Bool = false
+  @State private var animationComplete: Bool = false
 
-  // MARK: - States
-  @State private var isFinished: Bool = false
-  @State private var hideLogoVLstack: Bool = false
-  @State private var showLogoApplication: Bool = false
-  @State private var hideLogoApplication: Bool = false
-  @State private var animateLeadingLine: Bool = false
-  @State private var animateTrailingLine: Bool = false
-
-  // MARK: - Constructor
-  public init(@ViewBuilder view: @escaping () -> Source,
+  public init(width: CGFloat? = nil,
+              height: CGFloat? = nil,
+              @ViewBuilder view: @escaping () -> Source,
               @ViewBuilder content: @escaping () -> Content)
   {
    self.content = content
    self.source = view()
    self.isImage = false
    self.isTemplate = false
-   self.width = size
-   self.height = size
+   self.width = width ?? size
+   self.height = height ?? size
   }
 
   public init(image: Image,
@@ -67,59 +65,96 @@ public extension VLstack
    self.height = size
   }
 
-  private func onAppear()
-  {
-   VLUtils.delay(0.25, animation: .linear(duration: 1)) { animateTrailingLine.toggle() }
-   VLUtils.delay(0.25, animation: .linear(duration: 1)) { animateLeadingLine.toggle() }
-   VLUtils.delay(1, animation: .linear(duration: 0.25)) { hideLogoVLstack.toggle() }
-   VLUtils.delay(1, animation: .linear(duration: 0.5)) { showLogoApplication.toggle() }
-   VLUtils.delay(2.5, animation: .linear(duration: 0.25)) { hideLogoApplication.toggle() }
-   VLUtils.delay(3) { isFinished.toggle() }
-  }
-
-  // MARK: - Public
   public var body: some View
   {
-   if isFinished
+   if animationComplete
    {
     content()
    }
    else
    {
-    ZStack
+    KeyframeAnimator(initialValue: SplashAnimationValues(),
+                     trigger: animationStarted)
     {
-     switch splashType
+     values in
+     ZStack
      {
-     case .brandBackground: VLstack.SplashBackgroundBrand()
-     case .linearGradient(let color): VLstack.SplashBackgroundLinear(color: color)
+      switch splashType
+      {
+       case .brandBackground: VLstack.SplashBackgroundBrand()
+       case .linearGradient(let color): VLstack.SplashBackgroundLinear(color: color,
+                                                                       delay: 1.5,
+                                                                       duration: 2.5)
+      }
+
+      VLstack.Brand.logo
+       .resizable()
+       .renderingMode(.template)
+       .aspectRatio(contentMode: .fit)
+       .foregroundStyle(VLstack.Brand.Color.primary500On)
+       .scaleEffect(values.scaleVLstack)
+       .frame(width: size, height: size)
+
+      logoView
+       .scaleEffect(values.scaleAppLogo)
+       .opacity(values.opacityAppLogo)
+
+      Group
+      {
+       VLstack.SplashLineView(size: size,
+                              leadingTrim: values.lineLeadingTrim,
+                              trailingTrim: values.lineTrailingTrim)
+       VLstack.SplashLineView(size: size,
+                              leadingTrim: values.lineLeadingTrim,
+                              trailingTrim: values.lineTrailingTrim)
+       .rotationEffect(.init(degrees: 180))
+      }
+      .frame(maxWidth: .infinity)
+      .frame(height: size)
      }
-
-     VLstack.Brand.logo
-      .resizable()
-      .renderingMode(.template)
-      .aspectRatio(contentMode: .fit)
-      .foregroundStyle(VLstack.Brand.Color.primary500On)
-      .scaleEffect(hideLogoVLstack ? 0 : 1)
-      .frame(width: size, height: size)
-
-     logoView
-      .scaleEffect(hideLogoApplication ? 0 : 1)
-      .opacity(showLogoApplication ? 1 : 0)
-
-     Group
-     {
-      VLSplashLineView(size: size,
-                       animateLeading: animateLeadingLine,
-                       animateTrailing: animateTrailingLine)
-      VLSplashLineView(size: size,
-                       animateLeading: animateLeadingLine,
-                       animateTrailing: animateTrailingLine)
-      .rotationEffect(.init(degrees: 180))
-     }
-     .frame(maxWidth: .infinity)
-     .frame(height: size)
     }
-    .onAppear(perform: onAppear)
+    keyframes:
+    {
+     _ in
+
+     KeyframeTrack(\.lineLeadingTrim)
+     {
+      LinearKeyframe(0, duration: 0.25)
+      LinearKeyframe(1, duration: 1.75)
+     }
+
+     KeyframeTrack(\.lineTrailingTrim)
+     {
+      LinearKeyframe(1, duration: 1)
+     }
+
+     KeyframeTrack(\.scaleVLstack)
+     {
+      LinearKeyframe(1, duration: 1)
+      LinearKeyframe(0, duration: 0.5)
+     }
+
+     KeyframeTrack(\.scaleAppLogo)
+     {
+      LinearKeyframe(0, duration: 1)
+      LinearKeyframe(1, duration: 0.5)
+     }
+
+     KeyframeTrack(\.opacityAppLogo)
+     {
+      LinearKeyframe(0, duration: 1)
+      LinearKeyframe(1, duration: 1)
+      LinearKeyframe(0, duration: 2)
+     }
+    }
+    .onAppear
+    {
+     animationStarted = true
+     DispatchQueue.main.asyncAfter(deadline: .now() + 4)
+     {
+      animationComplete = true
+     }
+    }
    }
   }
 
@@ -128,7 +163,8 @@ public extension VLstack
   {
    if isImage
    {
-    (source as! Image).resizable()
+    (source as! Image)
+     .resizable()
      .renderingMode(isTemplate ? .template : .original)
      .aspectRatio(contentMode: .fit)
      .frame(width: width, height: height)
@@ -137,14 +173,16 @@ public extension VLstack
    else
    {
     source
+     .frame(width: width, height: height)
    }
   }
  }
 }
+
 #if DEBUG
 #Preview
 {
- VLstack.SplashView { Image(systemName: "figure.american.football").foregroundStyle(.yellow) }
+ VLstack.SplashView { Image(systemName: "figure.american.football").foregroundStyle(.yellow).font(.system(size: 80)) }
            content: { Text("splash is complete") }
   .splashType(.linearGradient(.red))
 }

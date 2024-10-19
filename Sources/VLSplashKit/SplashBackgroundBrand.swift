@@ -3,7 +3,7 @@ import SwiftUI
 
 extension VLstack
 {
- struct SplashBackgroundBrand: View
+ internal struct SplashBackgroundBrand: View
  {
   var body: some View
   {
