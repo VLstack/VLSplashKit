@@ -143,14 +143,15 @@ public extension VLstack
      KeyframeTrack(\.opacityAppLogo)
      {
       LinearKeyframe(0, duration: 1)
+      LinearKeyframe(1, duration: 0.5)
       LinearKeyframe(1, duration: 1)
-      LinearKeyframe(0, duration: 2)
+      LinearKeyframe(0, duration: 0.5)
      }
     }
     .onAppear
     {
      animationStarted = true
-     DispatchQueue.main.asyncAfter(deadline: .now() + 4)
+     DispatchQueue.main.asyncAfter(deadline: .now() + 3.25)
      {
       animationComplete = true
      }
