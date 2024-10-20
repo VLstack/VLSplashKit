@@ -151,7 +151,7 @@ public extension VLstack
     .onAppear
     {
      animationStarted = true
-     DispatchQueue.main.asyncAfter(deadline: .now() + 3.25)
+     DispatchQueue.main.asyncAfter(deadline: .now() + 3)
      {
       animationComplete = true
      }
