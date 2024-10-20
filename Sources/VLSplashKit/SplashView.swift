@@ -84,7 +84,7 @@ public extension VLstack
        case .brandBackground: VLstack.SplashBackgroundBrand()
        case .linearGradient(let color): VLstack.SplashBackgroundLinear(color: color,
                                                                        delay: 1.5,
-                                                                       duration: 2.5)
+                                                                       duration: 1.5)
       }
 
       VLstack.Brand.logo
